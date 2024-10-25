@@ -5,15 +5,27 @@
 {% block title %}Detalhes do Participante{% endblock %}
 
 {% block content %}
+
+
+<!--CSS para ajuste da foto-->
+<style>
+    .img-participante {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+</style>
+
+
 <div class="container mt-4">
     <h2 class="text-center mb-4">Detalhes do Participante</h2>
     
     <div class="row">
         <div class="col-md-4">
             {% if participante.foto %}
-                <img src="{{ participante.foto.url }}" class="img-fluid rounded" alt="Foto de {{ participante.nome }}">
+                <img src="{{ participante.foto.url }}" class="img-fluid rounded img-participante" alt="Foto de {{ participante.nome }}">
             {% else %}
-                <img src="{% static 'img/default-avatar.png' %}" class="img-fluid rounded" alt="Foto Padrão">
+                <img src="{% static 'image/sem_foto.png' %}" class="img-fluid rounded img-participante" alt="Foto Padrão">
             {% endif %}
         </div>
         <div class="col-md-8">
@@ -43,6 +55,8 @@
                     <td>{{ participante.telefone }}</td>
                 </tr>
             </table>
+
+            <a href="{% url 'atualizar_participante' participante.id %}" class="btn btn-warning">Editar Participante</a>
 
             <h4 class="mt-4">Participações em Eventos</h4>
             {% if participacoes %}
@@ -84,6 +98,9 @@
             {% else %}
             <p class="text-center">Nenhuma participação encontrada para este participante.</p>
             {% endif %}
+
+            <!-- Botão Editar -->
+            
             
             <a href="{% url 'lista_participantes' %}" class="btn btn-secondary mt-3">Voltar à Lista</a>
         </div>
