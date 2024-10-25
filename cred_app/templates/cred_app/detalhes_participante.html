@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Detalhes do Participante{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Detalhes do Participante</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            {% if participante.foto %}
+                <img src="{{ participante.foto.url }}" class="img-fluid rounded" alt="Foto de {{ participante.nome }}">
+            {% else %}
+                <img src="{% static 'img/default-avatar.png' %}" class="img-fluid rounded" alt="Foto Padrão">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Nome</th>
+                    <td>{{ participante.nome }}</td>
+                </tr>
+                <tr>
+                    <th>CPF</th>
+                    <td>{{ participante.cpf }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ participante.email }}</td>
+                </tr>
+                <tr>
+                    <th>Empresa</th>
+                    <td>{{ participante.nome_empresa }}</td>
+                </tr>
+                <tr>
+                    <th>CNPJ da Empresa</th>
+                    <td>{{ participante.cnpj_empresa }}</td>
+                </tr>
+                <tr>
+                    <th>Telefone</th>
+                    <td>{{ participante.telefone }}</td>
+                </tr>
+            </table>
+
+            <h4 class="mt-4">Participações em Eventos</h4>
+            {% if participacoes %}
+            <form method="POST" action="{% url 'atualizar_participacoes' participante.id %}">
+                {% csrf_token %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Evento</th>
+                            <th>Data de Inscrição</th>
+                            <th>Pagamento Confirmado</th>
+                            <th>Check-in Realizado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participacao in participacoes %}
+                        <tr>
+                            <td>{{ participacao.evento.nome }}</td>
+                            <td>{{ participacao.data_inscricao|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <select name="pagamento_confirmado_{{ participacao.id }}" class="form-control">
+                                    <option value="True" {% if participacao.pagamento_confirmado %}selected{% endif %}>Sim</option>
+                                    <option value="False" {% if not participacao.pagamento_confirmado %}selected{% endif %}>Não</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="checkin_realizado_{{ participacao.id }}" {% if not participacao.pagamento_confirmado %}disabled{% endif %} {% if participacao.checkin_realizado %}checked{% endif %}>
+                            </td>
+                            <td>
+                                <a href="{% url 'imprimir_etiqueta' participacao.id %}" class="btn btn-warning btn-sm">Credenciar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+            </form>
+            {% else %}
+            <p class="text-center">Nenhuma participação encontrada para este participante.</p>
+            {% endif %}
+            
+            <a href="{% url 'lista_participantes' %}" class="btn btn-secondary mt-3">Voltar à Lista</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="container mt-5">
+    <h2 class="text-center">Cadastro de Participante</h2>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'home' %}" class="btn btn-primary">Voltar para a Página Inicial</a>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="mt-4">  <!-- Atributo enctype adicionado -->
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_nome">Nome:</label>
+            {{ form.nome.errors }}
+            <input type="text" name="nome" class="form-control" placeholder="Digite seu nome" value="{{ form.nome.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_cpf">CPF:</label>
+            {{ form.cpf.errors }}
+            <input type="text" name="cpf" class="form-control" placeholder="Digite seu CPF" value="{{ form.cpf.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email:</label>
+            {{ form.email.errors }}
+            <input type="email" name="email" class="form-control" placeholder="Digite seu email" value="{{ form.email.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_nome_empresa">Nome da Empresa:</label>
+            {{ form.nome_empresa.errors }}
+            <input type="text" name="nome_empresa" class="form-control" placeholder="Digite o Nome da Empresa" value="{{ form.nome_empresa.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_cnpj_empresa">CNPJ da Empresa:</label>
+            {{ form.cnpj_empresa.errors }}
+            <input type="text" name="cnpj_empresa" class="form-control" placeholder="Digite o CNPJ da Empresa" value="{{ form.cnpj_empresa.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefone">Telefone:</label>
+            {{ form.telefone.errors }}
+            <input type="text" name="telefone" class="form-control" placeholder="Digite seu telefone" value="{{ form.telefone.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="id_foto">Foto:</label>  <!-- Novo campo para foto -->
+            {{ form.foto.errors }}
+            <input type="file" name="foto" class="form-control-file" accept="image/*">  <!-- Campo de upload de arquivo -->
+        </div>
+       
+        <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
+    </form>
+   
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
