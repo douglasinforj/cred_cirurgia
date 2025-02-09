@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ParticipanteForm, ParticipacaoForm
+from .forms import ParticipanteForm, ParticipacaoForm, UploadFileForm
 from .models import Evento, Participante, Participacao
+from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -8,6 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Q
 
 from django.core.paginator import Paginator  #paginações
+
+import pandas as pd
 
 
 #autenticação do sistema:
@@ -32,13 +35,6 @@ def lista_participantes(request):
 
     return render(request, 'cred_app/lista_participantes.html', {'page_obj': page_obj, 'query': query})
 
-
-
-"""
-def detalhes_participante(request, participante_id):
-    participante = get_object_or_404(Participante, id=participante_id)
-    return render(request, 'cred_app/detalhes_participante.html', {'participante': participante})
-"""
 
 @login_required
 def detalhes_participante(request, participante_id):
@@ -150,3 +146,64 @@ def atualizar_participacoes(request, participante_id):
 def imprimir_etiqueta(request, participacao_id):
     participacao = get_object_or_404(Participacao, id=participacao_id)
     return render(request, 'cred_app/imprimir_etiqueta.html', {'participacao': participacao})
+
+
+
+
+# Importação de dados:
+
+def import_participantes(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES["file"]
+            try:
+                # Verifica se o arquivo é CSV ou Excel
+                if file.name.endswith(".csv"):
+                    df = pd.read_csv(file, dtype=str)
+                elif file.name.endswith((".xls", ".xlsx")):
+                    df = pd.read_excel(file, dtype=str)
+                else:
+                    messages.error(request, "Formato de arquivo inválido. Use CSV ou Excel.")
+                    return redirect("import_participantes")
+
+                # Renomeia colunas para corresponder ao modelo
+                df = df.rename(columns={
+                    "Foto": "foto",
+                    "Nome": "nome",
+                    "CPF": "cpf",
+                    "E-mail": "email",
+                    "Nome Empresa": "nome_empresa",
+                    "CNPJ Empresa": "cnpj_empresa",
+                    "Telefone": "telefone",
+                })
+
+                # Verifica se todas as colunas necessárias existem
+                required_columns = {"nome", "cpf", "email", "nome_empresa", "cnpj_empresa", "telefone"}
+                if not required_columns.issubset(df.columns):
+                    messages.error(request, "O arquivo deve conter as colunas: Nome, CPF, Email, Nome Empresa, CNPJ Empresa e Telefone.")
+                    return redirect("import_participantes")
+
+                # Importa os dados para o banco de dados
+                for _, row in df.iterrows():
+                    if not Participante.objects.filter(cpf=row["cpf"]).exists():
+                        Participante.objects.create(
+                            nome=row["nome"],
+                            cpf=row["cpf"],
+                            email=row["email"],
+                            nome_empresa=row["nome_empresa"],
+                            cnpj_empresa=row["cnpj_empresa"],
+                            telefone=row["telefone"]
+                        )
+                
+                messages.success(request, "Dados importados com sucesso!")
+                return redirect("import_participantes")
+
+            except Exception as e:
+                messages.error(request, f"Erro ao importar: {str(e)}")
+                return redirect("import_participantes")
+
+    else:
+        form = UploadFileForm()
+    
+    return render(request, "cred_app/import_participantes.html", {"form": form})

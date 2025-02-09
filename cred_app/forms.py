@@ -11,3 +11,7 @@ class ParticipacaoForm(forms.ModelForm):
     class Meta:
         model = Participacao
         fields = ['evento']
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField(label="Selecione um arquivo CSV ou excel")

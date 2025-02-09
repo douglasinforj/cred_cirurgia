@@ -24,4 +24,6 @@ urlpatterns = [
 
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+
+    path("import_participantes/", views.import_participantes, name="import_participantes")
 ]
