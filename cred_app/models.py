@@ -24,9 +24,9 @@ class Participante(models.Model):
     nome = models.CharField(max_length=100)
     cpf = models.CharField(max_length=11, unique=True, verbose_name="CPF")
     email = models.EmailField(unique=True)
-    nome_empresa = models.CharField(max_length=100, verbose_name="Nome Empresa")
-    cnpj_empresa = models.CharField(max_length=14, verbose_name="CNPJ Empresa")
-    telefone = models.CharField(max_length=15)
+    nome_empresa = models.CharField(max_length=100, verbose_name="Nome Empresa", null=True, blank=True)
+    cnpj_empresa = models.CharField(max_length=14, verbose_name="CNPJ Empresa", null=True, blank=True)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
 
     class Meta:
         verbose_name = "Participante"

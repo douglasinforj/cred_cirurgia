@@ -51,3 +51,23 @@ class EventoAdmin(admin.ModelAdmin):
     exibir_foto.short_description = 'Foto do Evento'
 
 admin.site.register(Evento, EventoAdmin)
+
+
+
+
+class ParticipacaoAdmin(admin.ModelAdmin):
+    
+    list_display = ('participante', 'evento', 'data_inscricao', 'pagamento_confirmado', 'checkin_realizado')
+
+    list_filter = ('pagamento_confirmado', 'checkin_realizado', 'evento')
+    
+    search_fields = ('participante__nome', 'evento__nome')
+
+    fields = ('participante', 'evento', 'data_inscricao', 'pagamento_confirmado', 'checkin_realizado')
+
+    list_editable = ('pagamento_confirmado', 'checkin_realizado')
+
+    # Adiciona opções de ordenação
+    ordering = ('-data_inscricao',)
+
+admin.site.register(Participacao, ParticipacaoAdmin)

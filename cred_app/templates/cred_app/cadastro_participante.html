@@ -51,10 +51,20 @@
             {{ form.foto.errors }}
             <input type="file" name="foto" class="form-control-file" accept="image/*">  <!-- Campo de upload de arquivo -->
         </div>
-       
+
+        <!-- Novo campo para selecionar evento -->
+        <div class="form-group">
+            <label for="id_evento">Selecione o Evento:</label>
+            <select name="evento" class="form-control" id="id_evento">
+                <option value="">Selecione um evento</option>
+                {% for evento in eventos %}
+                    <option value="{{ evento.id }}">{{ evento.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
     </form>
-   
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ParticipanteForm, ParticipacaoForm, UploadFileForm
 from .models import Evento, Participante, Participacao
 from django.contrib import messages
+from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -81,20 +82,32 @@ def detalhes_evento(request, evento_id):
 # Função para cadastrar o participante
 def cadastro_participante(request):
     if request.method == 'POST':
-        form = ParticipanteForm(request.POST)
+        form = ParticipanteForm(request.POST, request.FILES)
         if form.is_valid():
-            participante = form.save()  # Salva o participante
-            # Redireciona para a página de inscrição do evento passando o participante_id
-            return redirect('inscricao_evento', participante_id=participante.id)
+            # Salva o participante
+            participante = form.save()
+
+            # Verificar se um evento foi selecionado e criar a participação
+            evento_id = request.POST.get('evento')
+            if evento_id:
+                evento = Evento.objects.get(id=evento_id)
+                Participacao.objects.create(participante=participante, evento=evento)
+            
+            # Redireciona para a página de sucesso
+            return redirect('sucesso')
     else:
         form = ParticipanteForm()
-    return render(request, 'cred_app/cadastro_participante.html', {'form': form})
+
+    # Passando todos os eventos para o template
+    eventos = Evento.objects.all()
+    return render(request, 'cred_app/cadastro_participante.html', {'form': form, 'eventos': eventos})
 
 
 
 # Função para inscrição em eventos
 def inscricao_evento(request, participante_id):
-    participante = get_object_or_404(Participante, id=participante_id)  # Garante que o participante existe
+    participante = get_object_or_404(Participante, id=participante_id)
+    
     if request.method == 'POST':
         form = ParticipacaoForm(request.POST)
         if form.is_valid():
@@ -140,6 +153,8 @@ def atualizar_participacoes(request, participante_id):
 
         return redirect('detalhes_participante', participante_id=participante.id)
     
+
+
 
 #chamar a pagina de impressao:
 
