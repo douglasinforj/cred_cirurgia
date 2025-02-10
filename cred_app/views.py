@@ -183,21 +183,26 @@ def import_participantes(request):
                     return redirect("import_participantes")
 
                 # Renomeia colunas para corresponder ao modelo
+                df.columns = df.columns.str.strip().str.lower()
                 df = df.rename(columns={
-                    "Foto": "foto",
-                    "Nome": "nome",
-                    "CPF": "cpf",
-                    "E-mail": "email",
-                    "Nome Empresa": "nome_empresa",
-                    "CNPJ Empresa": "cnpj_empresa",
-                    "Telefone": "telefone",
+                    "foto": "foto",
+                    "nome": "nome",
+                    "cpf": "cpf",
+                    "e-mail": "email",
+                    "nome empresa": "nome_empresa",
+                    "cnpj empresa": "cnpj_empresa",
+                    "telefone": "telefone",
+                    "pago": "pago"
                 })
 
                 # Verifica se todas as colunas necessárias existem
-                required_columns = {"nome", "cpf", "email", "nome_empresa", "cnpj_empresa", "telefone"}
+                required_columns = {"nome", "cpf", "email", "nome_empresa", "cnpj_empresa", "telefone", "pago"}
                 if not required_columns.issubset(df.columns):
-                    messages.error(request, "O arquivo deve conter as colunas: Nome, CPF, Email, Nome Empresa, CNPJ Empresa e Telefone.")
+                    messages.error(request, "O arquivo deve conter as colunas: Nome, CPF, Email, Nome Empresa, CNPJ Empresa, Telefone e Pago.")
                     return redirect("import_participantes")
+
+                # Converte os valores da coluna "pago" para booleanos
+                df["pago"] = df["pago"].fillna("False").astype(str).str.lower().map({"true": True, "1": True, "yes": True, "sim": True, "pago": True, "false": False, "0": False, "no": False, "não": False, "nao": False})
 
                 # Importa os dados para o banco de dados
                 for _, row in df.iterrows():
@@ -208,7 +213,8 @@ def import_participantes(request):
                             email=row["email"],
                             nome_empresa=row["nome_empresa"],
                             cnpj_empresa=row["cnpj_empresa"],
-                            telefone=row["telefone"]
+                            telefone=row["telefone"],
+                            pago=row["pago"]  # Adiciona o campo pago
                         )
                 
                 messages.success(request, "Dados importados com sucesso!")
