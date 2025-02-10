@@ -1,5 +1,8 @@
 from django.db import models
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Evento(models.Model):
     nome = models.CharField(max_length=255, verbose_name="Nome do Evento")
@@ -27,6 +30,7 @@ class Participante(models.Model):
     nome_empresa = models.CharField(max_length=100, verbose_name="Nome Empresa", null=True, blank=True)
     cnpj_empresa = models.CharField(max_length=14, verbose_name="CNPJ Empresa", null=True, blank=True)
     telefone = models.CharField(max_length=15, null=True, blank=True)
+    pago = models.BooleanField(default=False, verbose_name="Pagamento Realizado")
 
     class Meta:
         verbose_name = "Participante"
@@ -49,4 +53,15 @@ class Participacao(models.Model):
     class Meta:
         verbose_name = "Participação"
         verbose_name_plural = "Participações"
+
+
+# Função de sinal para atualizar Participacao quando Participante for salvo
+@receiver(post_save, sender=Participante)
+def atualizar_participacao_pago(sender, instance, created, **kwargs):
+    if not created:  # Verifica se o participante foi atualizado, não criado
+        # Atualiza todas as participações associadas a este participante
+        participacoes = Participacao.objects.filter(participante=instance)
+        for participacao in participacoes:
+            participacao.pagamento_confirmado = instance.pago  # Define pagamento_confirmado igual a 'pago'
+            participacao.save()
 
