@@ -160,7 +160,7 @@ def atualizar_participacoes(request, participante_id):
 
 
 #chamar a pagina de impressao:
-
+@login_required
 def imprimir_etiqueta(request, participacao_id):
     participacao = get_object_or_404(Participacao, id=participacao_id)
     return render(request, 'cred_app/imprimir_etiqueta.html', {'participacao': participacao})
@@ -169,7 +169,7 @@ def imprimir_etiqueta(request, participacao_id):
 
 
 # Importação de dados:
-
+@login_required
 def import_participantes(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
@@ -247,7 +247,7 @@ def import_participantes(request):
 
 
 #-----------------------------Relatórios-----------------------------------
-
+@login_required
 def kpi_relatorio(request):
     total_participantes = Participante.objects.count()
     total_checkin = Participacao.objects.filter(checkin_realizado=True).count()
