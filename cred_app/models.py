@@ -11,6 +11,7 @@ class Evento(models.Model):
     local = models.CharField(max_length=255, verbose_name="Local do Evento")
     descricao = models.TextField(verbose_name="Descrição do Evento")
     foto = models.ImageField(upload_to='fotos/eventos/', null=True, blank=True, verbose_name="Foto do Evento")
+    valor = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Valor do Evento", default=0.00)
     criado_em = models.DateTimeField(auto_now_add=True, verbose_name="Criado em")
  
 

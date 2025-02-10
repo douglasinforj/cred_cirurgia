@@ -3,6 +3,7 @@ from .forms import ParticipanteForm, ParticipacaoForm, UploadFileForm
 from .models import Evento, Participante, Participacao
 from django.contrib import messages
 from django.urls import reverse
+from django.db import transaction
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -202,21 +203,34 @@ def import_participantes(request):
                     return redirect("import_participantes")
 
                 # Converte os valores da coluna "pago" para booleanos
-                df["pago"] = df["pago"].fillna("False").astype(str).str.lower().map({"true": True, "1": True, "yes": True, "sim": True, "pago": True, "false": False, "0": False, "no": False, "não": False, "nao": False})
+                df["pago"] = df["pago"].fillna("False").astype(str).str.lower().map({
+                    "true": True, "1": True, "yes": True, "sim": True, "pago": True,
+                    "false": False, "0": False, "no": False, "não": False, "nao": False
+                })
 
                 # Importa os dados para o banco de dados
-                for _, row in df.iterrows():
-                    if not Participante.objects.filter(cpf=row["cpf"]).exists():
-                        Participante.objects.create(
-                            nome=row["nome"],
-                            cpf=row["cpf"],
-                            email=row["email"],
-                            nome_empresa=row["nome_empresa"],
-                            cnpj_empresa=row["cnpj_empresa"],
-                            telefone=row["telefone"],
-                            pago=row["pago"]  # Adiciona o campo pago
-                        )
-                
+                with transaction.atomic():
+                    for _, row in df.iterrows():
+                        # Tenta buscar um participante pelo CPF ou E-mail
+                        participante = Participante.objects.filter(cpf=row["cpf"]).first() or \
+                                       Participante.objects.filter(email=row["email"]).first()
+
+                        if participante:
+                            # Atualiza apenas o campo pago
+                            participante.pago = row["pago"]
+                            participante.save()
+                        else:
+                            # Cria um novo participante caso não exista
+                            Participante.objects.create(
+                                nome=row["nome"],
+                                cpf=row["cpf"],
+                                email=row["email"],
+                                nome_empresa=row["nome_empresa"],
+                                cnpj_empresa=row["cnpj_empresa"],
+                                telefone=row["telefone"],
+                                pago=row["pago"]
+                            )
+
                 messages.success(request, "Dados importados com sucesso!")
                 return redirect("import_participantes")
 

@@ -54,11 +54,15 @@
                     <th>Telefone</th>
                     <td>{{ participante.telefone }}</td>
                 </tr>
+                <tr class="{% if participante.pago %}table-success{% else %}table-warning{% endif %}">
+                    <th>Pagamento</th>
+                    <td>{{ participante.pago|yesno:"Sim,Não" }}</td>
+                </tr>
             </table>
 
             <a href="{% url 'atualizar_participante' participante.id %}" class="btn btn-warning">Editar Participante</a>
 
-            <h4 class="mt-4">Participações em Eventos</h4>
+            <h4 class="mt-4">Credenciar - Participações em Eventos</h4>
             <hr>
             <a href="{% url 'inscricao_evento' participante.id %}" class="btn btn-success">Adicionar Eventos</a>
             {% if participacoes %}
@@ -68,6 +72,7 @@
                     <thead>
                         <tr>
                             <th>Evento</th>
+                            <th>Valor</th>
                             <th>Data de Inscrição</th>
                             <th>Pagamento Confirmado</th>
                             <th>Check-in Realizado</th>
@@ -78,6 +83,7 @@
                         {% for participacao in participacoes %}
                         <tr>
                             <td>{{ participacao.evento.nome }}</td>
+                            <td>{{ participacao.evento.valor }}</td>
                             <td>{{ participacao.data_inscricao|date:"d/m/Y H:i" }}</td>
                             <td>
                                 <select name="pagamento_confirmado_{{ participacao.id }}" class="form-control">
