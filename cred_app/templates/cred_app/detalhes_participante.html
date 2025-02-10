@@ -59,6 +59,8 @@
             <a href="{% url 'atualizar_participante' participante.id %}" class="btn btn-warning">Editar Participante</a>
 
             <h4 class="mt-4">Participações em Eventos</h4>
+            <hr>
+            <a href="{% url 'inscricao_evento' participante.id %}" class="btn btn-success">Adicionar Eventos</a>
             {% if participacoes %}
             <form method="POST" action="{% url 'atualizar_participacoes' participante.id %}">
                 {% csrf_token %}
