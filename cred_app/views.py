@@ -4,6 +4,7 @@ from .models import Evento, Participante, Participacao
 from django.contrib import messages
 from django.urls import reverse
 from django.db import transaction
+from django.db.models import Sum
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -106,6 +107,7 @@ def cadastro_participante(request):
 
 
 # Função para inscrição em eventos
+@login_required
 def inscricao_evento(request, participante_id):
     participante = get_object_or_404(Participante, id=participante_id)
     
@@ -242,3 +244,24 @@ def import_participantes(request):
         form = UploadFileForm()
     
     return render(request, "cred_app/import_participantes.html", {"form": form})
+
+
+#-----------------------------Relatórios-----------------------------------
+
+def kpi_relatorio(request):
+    total_participantes = Participante.objects.count()
+    total_checkin = Participacao.objects.filter(checkin_realizado=True).count()
+    total_pago = Participacao.objects.filter(pagamento_confirmado=True).count()
+
+    # Cálculo do valor estimado a receber e o valor real após check-in
+    valor_estimado = Participacao.objects.filter(pagamento_confirmado=True).aggregate(total=Sum('evento__valor'))['total'] or 0.00
+    valor_real = Participacao.objects.filter(checkin_realizado=True).aggregate(total=Sum('evento__valor'))['total'] or 0.00
+
+    context = {
+        'total_participantes': total_participantes,
+        'total_checkin': total_checkin,
+        'total_pago': total_pago,
+        'valor_estimado': valor_estimado,
+        'valor_real': valor_real
+    }
+    return render(request, 'cred_app/kpi_relatorio.html', context)

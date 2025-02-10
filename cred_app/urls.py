@@ -25,5 +25,7 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
-    path("import_participantes/", views.import_participantes, name="import_participantes")
+    path("import_participantes/", views.import_participantes, name="import_participantes"),
+
+    path('relatorio-kpi/', views.kpi_relatorio, name='relatorio_kpi'),
 ]

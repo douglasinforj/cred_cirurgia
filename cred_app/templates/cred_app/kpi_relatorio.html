@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Relatório de KPIs</h2>
+
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white p-3">
+                <h5>Total de Participantes</h5>
+                <h2>{{ total_participantes }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white p-3">
+                <h5>Check-ins Realizados</h5>
+                <h2>{{ total_checkin }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark p-3">
+                <h5>Pagamentos Confirmados</h5>
+                <h2>{{ total_pago }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white p-3">
+                <h5>Valor Estimado a Receber</h5>
+                <h2>R$ {{ valor_estimado|floatformat:2 }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mt-3">
+            <div class="card bg-danger text-white p-3">
+                <h5>Valor Recebido Após Check-in</h5>
+                <h2>R$ {{ valor_real|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
