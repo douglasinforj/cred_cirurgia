@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Detalhes do Evento{% endblock %}
 
 {% block content %}
@@ -14,7 +16,12 @@
 
     <div class="container">
         <h1>{{ evento.nome }}</h1>
-        <img src="{{ evento.foto.url }}" alt="Imagem do evento" class="img-fluid mb-4 evento-imagem  evento-imagem">
+        {% if evento.foto %}
+            <img src="{{ evento.foto.url }}" alt="Imagem do evento" class="img-fluid mb-4 evento-imagem  evento-imagem">
+        {% else %}
+            <img src="{% static 'image/placeholder.png' %}" alt="Imagem do evento" class="img-fluid mb-4 evento-imagem  evento-imagem">
+        {% endif %}
+
         
         <div class="card">
             <div class="card-body">
