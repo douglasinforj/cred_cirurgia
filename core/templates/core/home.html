@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
@@ -19,7 +21,11 @@
         {% for evento in eventos %}
             <div class="col-md-4 mb-4 d-flex align-items-stretch">
                 <div class="card h-100">
-                    <img src="{{ evento.foto.url }}" class="card-img-top evento-imagem" alt="Imagem do evento" style="height: 200px; object-fit: cover;">
+                    {% if evento.foto %}
+                        <img src="{{ evento.foto.url }}" class="card-img-top evento-imagem" alt="Imagem do evento" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'image/placeholder.jpg' %}" class="card-img-top evento-imagem" alt="Imagem padrão" style="height: 200px; object-fit: cover;">
+                    {% endif %}
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ evento.nome }}</h5>
                         <p class="card-text flex-grow-1">{{ evento.descricao }}</p>

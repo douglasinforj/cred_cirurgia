@@ -63,7 +63,7 @@ class ParticipacaoAdmin(admin.ModelAdmin):
     
     search_fields = ('participante__nome', 'evento__nome')
 
-    fields = ('participante', 'evento', 'data_inscricao', 'pagamento_confirmado', 'checkin_realizado')
+    fields = ('participante', 'evento', 'pagamento_confirmado', 'checkin_realizado')
 
     list_editable = ('pagamento_confirmado', 'checkin_realizado')
 
