@@ -6,6 +6,15 @@
 
 {% block content %}
 
+<!--Mensagens passadas para o template-->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
 
 <!--CSS para ajuste da foto-->
 <style>
@@ -54,10 +63,12 @@
                     <th>Telefone</th>
                     <td>{{ participante.telefone }}</td>
                 </tr>
+                <!--Caso seja para um evneto só, mais de um não tem sentido
                 <tr class="{% if participante.pago %}table-success{% else %}table-warning{% endif %}">
                     <th>Pagamento</th>
                     <td>{{ participante.pago|yesno:"Sim,Não" }}</td>
                 </tr>
+                -->
             </table>
 
             <a href="{% url 'atualizar_participante' participante.id %}" class="btn btn-warning">Editar Participante</a>
@@ -96,7 +107,9 @@
                             </td>
                             <td>
                                 <a href="{% url 'imprimir_etiqueta' participacao.id %}" class="btn btn-warning btn-sm">Credenciar</a>
-
+                            </td>
+                            <td>
+                                <a href="{% url 'cancelar_inscricao' participacao.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja remover esta inscrição?');">Remover</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -107,12 +120,12 @@
             {% else %}
             <p class="text-center">Nenhuma participação encontrada para este participante.</p>
             {% endif %}
-
-            <!-- Botão Editar -->
             
             
             <a href="{% url 'lista_participantes' %}" class="btn btn-secondary mt-3">Voltar à Lista</a>
         </div>
     </div>
 </div>
+
+
 {% endblock %}
