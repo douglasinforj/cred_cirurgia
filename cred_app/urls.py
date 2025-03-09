@@ -11,8 +11,6 @@ urlpatterns = [
     
     path('participantes/', views.lista_participantes, name='lista_participantes'),
     path('participante/<int:participante_id>/', views.detalhes_participante, name='detalhes_participante'),  # Este caminho está correto
-    # Remova a linha abaixo, pois é redundante e causa conflito
-    # path('detalhes_participante/', views.detalhes_participante, name='detalhes_participante'),
     
     path('participante/atualizar/<int:id>/', views.atualizar_participante, name='atualizar_participante'),
     
