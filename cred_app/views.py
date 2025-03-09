@@ -29,10 +29,10 @@ def lista_participantes(request):
     
     # Filtrar e ordenar os participantes
     participantes = Participante.objects.filter(
-        Q(nome__icontains=query) | Q(cpf__icontains=query)  # Adiciona pesquisa por CPF
+        Q(nome__icontains=query) | Q(cpf__icontains=query)  # Pesquisa nome e cpf
     ).order_by('nome')
 
-    paginator = Paginator(participantes, 5)  # Alterar o número '5' se quiser mais ou menos por página
+    paginator = Paginator(participantes, 5)  # paginando 5 em 5
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -128,6 +128,21 @@ def inscricao_evento(request, participante_id):
 # Página de sucesso
 def sucesso(request):
     return render(request, 'cred_app/sucesso.html')
+
+
+#Função para cancelar a inscrição
+@login_required
+def cancelar_inscricao(request, participacao_id):
+    participacao = get_object_or_404(Participacao, id=participacao_id)
+    participante_id = participacao.participante.id   # Armazena o ID do participante antes de excluir
+    participacao.delete()  #exclui
+
+    messages.success(request, "Incrição no evento removida com sucesso!")      #mensagem passada parao template
+    return redirect('detalhes_participante', participante_id=participante_id)  # Redireciona para a página de inscrição
+
+
+
+
 
 
 
