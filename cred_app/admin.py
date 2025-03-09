@@ -6,7 +6,7 @@ from django.utils.html import format_html
 class ParticipanteAdmin(admin.ModelAdmin):
     list_display = ('foto_com_icone','nome', 'cpf', 'email','nome_empresa', 'cnpj_empresa', 'telefone','pago')
     search_fields = ('nome', 'cpf', 'email')
-    readonly_fields = ('exibir_foto',)  # Campo somente leitura para ver a foto
+    readonly_fields = ('exibir_foto',)                  # Campo somente leitura para ver a foto
 
     #Apresentar a foto como miniatura no admin
     def foto_com_icone(self, obj):
