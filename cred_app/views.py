@@ -117,7 +117,7 @@ def inscricao_evento(request, participante_id):
             participacao = form.save(commit=False)
             participacao.participante = participante  # Associa o participante à inscrição
             participacao.save()  # Salva a participação
-            return redirect('sucesso')  # Redireciona para a página de sucesso
+            return redirect('detalhes_participante', participante_id=participante_id)  # Redireciona para a página de sucesso
     else:
         form = ParticipacaoForm()
     
@@ -137,7 +137,7 @@ def cancelar_inscricao(request, participacao_id):
     participante_id = participacao.participante.id   # Armazena o ID do participante antes de excluir
     participacao.delete()  #exclui
 
-    messages.success(request, "Incrição no evento removida com sucesso!")      #mensagem passada parao template
+    messages.success(request, "Inscrição no evento removida com sucesso!")      #mensagem passada parao template
     return redirect('detalhes_participante', participante_id=participante_id)  # Redireciona para a página de inscrição
 
 
