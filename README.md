@@ -91,8 +91,26 @@ Este projeto é um sistema de gestão de eventos e participantes, desenvolvido e
 ### Tela de Login  
 ![Tela de Login](assets/images/image_login.png)
 
-### Dashboard  
-![Dashboard](assets/images/dashboard.png)
+### Tela Principal  
+![Tela Inicio](assets/images/inicio.png)
+
+### Lista Evento
+![Tela Eventos](assets/images/lista_eventos.png)
+
+### Detalhe Evento
+![Tela Eventos](assets/images/detalhes_eventos.png)
+
+### Lista Participante
+![Tela Eventos](assets/images/lista_participantes.png)
+
+### Detalhe Participante
+![Tela Eventos](assets/images/detalhe_participante.png)
+
+### Importar Participantes
+![Tela Eventos](assets/images/importacao_dados.png)
+
+### Relatórios
+![Tela Eventos](assets/images/relatorios.png)
 
 
 ## Contribuições
