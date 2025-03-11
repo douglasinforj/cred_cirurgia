@@ -29,7 +29,7 @@ def lista_participantes(request):
     
     # Filtrar e ordenar os participantes
     participantes = Participante.objects.filter(
-        Q(nome__icontains=query) | Q(cpf__icontains=query)  # Pesquisa nome e cpf
+        Q(nome__icontains=query) | Q(cpf__icontains=query) | Q(email__icontains=query) | Q(nome_empresa__icontains=query)  # Pesquisa nome e cpf
     ).order_by('nome')
 
     paginator = Paginator(participantes, 5)  # paginando 5 em 5
