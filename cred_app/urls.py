@@ -8,6 +8,7 @@ urlpatterns = [
     path('cadastro/', views.cadastro_participante, name='cadastro_participante'),
     path('inscricao/<int:participante_id>/', views.inscricao_evento, name='inscricao_evento'),
     path('sucesso/', views.sucesso, name='sucesso'),
+    path('cadastro_sucesso/', views.cadastro_sucesso, name='cadastro_sucesso'),
     
     path('participantes/', views.lista_participantes, name='lista_participantes'),
     path('participante/<int:participante_id>/', views.detalhes_participante, name='detalhes_participante'),  # Este caminho está correto
