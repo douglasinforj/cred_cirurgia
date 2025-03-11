@@ -95,14 +95,24 @@ def cadastro_participante(request):
                 evento = Evento.objects.get(id=evento_id)
                 Participacao.objects.create(participante=participante, evento=evento)
             
-            # Redireciona para a página de sucesso
-            return redirect('sucesso')
+            # Verifica se o usuário está logado
+            if request.user.is_authenticated:
+                # Se o usuário estiver logado, redireciona para os detalhes do participante
+                return redirect('detalhes_participante', participante_id=participante.id)
+            else:
+                # Se o usuário não estiver logado, redireciona para a página de boas-vindas
+                return redirect('cadastro_sucesso')  
     else:
         form = ParticipanteForm()
 
-    # Passando todos os eventos para o template
+    # Passando fromulário e evnetos para template
     eventos = Evento.objects.all()
     return render(request, 'cred_app/cadastro_participante.html', {'form': form, 'eventos': eventos})
+
+
+#pagina de sucesso após cadastro para não logados
+def cadastro_sucesso(request):
+    return render(request, 'cred_app/cadastro_sucesso.html')
 
 
 
