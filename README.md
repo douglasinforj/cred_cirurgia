@@ -89,7 +89,7 @@ Este projeto é um sistema de gestão de eventos e participantes, desenvolvido e
 ## 📸 Imagens do Projeto
 
 ### Tela de Login  
-![Tela de Login](assets/images/tela-login.png)
+![Tela de Login](assets/images/image_login.png)
 
 ### Dashboard  
 ![Dashboard](assets/images/dashboard.png)
