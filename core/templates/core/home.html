@@ -9,27 +9,27 @@
 
 <style>
     .evento-imagem {
-        width: 300px; /* Defina a largura desejada */
-        height: 200px; /* Defina a altura desejada */
+        width: 100%; /* Garantir que a imagem ocupe toda a largura da coluna */
+        height: 200px; /* Altura fixa */
         object-fit: cover; /* Ajusta a imagem para cobrir o espaço definido */
     }
 </style>
 
 <div class="container">
-    <h1 class="text-center my-4 ">Eventos 2025</h1>
-    <div class="row justify-content-center">
+    <h1 class="text-center my-4">Eventos 2025</h1>
+    <div class="row justify-content-center d-flex">
         {% for evento in eventos %}
-            <div class="col-md-4 mb-4 d-flex align-items-stretch">
+            <div class="col-md-4 mb-4 d-flex justify-content-center">
                 <div class="card h-100">
                     {% if evento.foto %}
-                        <img src="{{ evento.foto.url }}" class="card-img-top evento-imagem" alt="Imagem do evento" style="height: 200px; object-fit: cover;">
+                        <img src="{{ evento.foto.url }}" class="card-img-top evento-imagem" alt="Imagem do evento">
                     {% else %}
-                        <img src="{% static 'image/placeholder.png' %}" class="card-img-top evento-imagem" alt="Imagem padrão" style="height: 200px; object-fit: cover;">
+                        <img src="{% static 'image/placeholder.png' %}" class="card-img-top evento-imagem" alt="Imagem padrão">
                     {% endif %}
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ evento.nome }}</h5>
                         <p class="card-text flex-grow-1">{{ evento.descricao }}</p>
-                        <p class="card-text flex-grow-1">R$: {{ evento.valor }}</p>
+                        <p class="card-text">R$: {{ evento.valor }}</p>
                         <a href="{% url 'detalhes_evento' evento.id %}" class="btn btn-primary mt-auto">Ver Detalhes</a>
                     </div>
                 </div>
