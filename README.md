@@ -86,6 +86,14 @@ Este projeto é um sistema de gestão de eventos e participantes, desenvolvido e
    ```
    http://127.0.0.1:8000/
    ```
+## 📸 Imagens do Projeto
+
+### Tela de Login  
+![Tela de Login](assets/images/tela-login.png)
+
+### Dashboard  
+![Dashboard](assets/images/dashboard.png)
+
 
 ## Contribuições
 Contribuições são bem-vindas! Para contribuir, siga os passos:
