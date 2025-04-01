@@ -205,6 +205,17 @@ def import_participantes(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES["file"]
+            evento_id = request.POST.get("evento")  # Pega o ID do evento do formulário
+            evento = None
+            
+            # Busca o evento se o ID foi fornecido
+            if evento_id:
+                try:
+                    evento = Evento.objects.get(id=evento_id)
+                except Evento.DoesNotExist:
+                    messages.error(request, "Evento selecionado não encontrado.")
+                    return redirect("import_participantes")
+
             try:
                 # Verifica se o arquivo é CSV ou Excel
                 if file.name.endswith(".csv"):
@@ -225,42 +236,74 @@ def import_participantes(request):
                     "nome empresa": "nome_empresa",
                     "cnpj empresa": "cnpj_empresa",
                     "telefone": "telefone",
-                    "pago": "pago"
+                    "pago": "pago",
+                    "evento_id": "evento_id"  # Nova coluna opcional para evento
                 })
 
-                # Verifica se todas as colunas necessárias existem
-                required_columns = {"nome", "cpf", "email", "nome_empresa", "cnpj_empresa", "telefone", "pago"}
+                # Verifica colunas obrigatórias
+                required_columns = {"nome", "cpf", "email"}
                 if not required_columns.issubset(df.columns):
-                    messages.error(request, "O arquivo deve conter as colunas: Nome, CPF, Email, Nome Empresa, CNPJ Empresa, Telefone e Pago.")
+                    messages.error(request, "O arquivo deve conter pelo menos as colunas: Nome, CPF e Email.")
                     return redirect("import_participantes")
 
                 # Converte os valores da coluna "pago" para booleanos
-                df["pago"] = df["pago"].fillna("False").astype(str).str.lower().map({
-                    "true": True, "1": True, "yes": True, "sim": True, "pago": True,
-                    "false": False, "0": False, "no": False, "não": False, "nao": False
-                })
+                if "pago" in df.columns:
+                    df["pago"] = df["pago"].fillna("False").astype(str).str.lower().map({
+                        "true": True, "1": True, "yes": True, "sim": True, "pago": True,
+                        "false": False, "0": False, "no": False, "não": False, "nao": False
+                    })
+                else:
+                    df["pago"] = False  # Valor padrão se a coluna não existir
 
                 # Importa os dados para o banco de dados
                 with transaction.atomic():
                     for _, row in df.iterrows():
+                        # Determina qual evento usar (prioridade: linha > formulário)
+                        evento_linha = None
+                        if "evento_id" in row and pd.notna(row["evento_id"]):
+                            try:
+                                evento_linha = Evento.objects.get(id=row["evento_id"])
+                            except (Evento.DoesNotExist, ValueError):
+                                pass
+                        
+                        evento_final = evento_linha if evento_linha else evento
+
                         # Tenta buscar um participante pelo CPF ou E-mail
                         participante = Participante.objects.filter(cpf=row["cpf"]).first() or \
                                        Participante.objects.filter(email=row["email"]).first()
 
                         if participante:
-                            # Atualiza apenas o campo pago
+                            # Atualiza o participante existente
+                            participante.nome = row["nome"]
+                            if "nome_empresa" in row:
+                                participante.nome_empresa = row["nome_empresa"]
+                            if "cnpj_empresa" in row:
+                                participante.cnpj_empresa = row["cnpj_empresa"]
+                            if "telefone" in row:
+                                participante.telefone = row["telefone"]
                             participante.pago = row["pago"]
                             participante.save()
                         else:
-                            # Cria um novo participante caso não exista
-                            Participante.objects.create(
+                            # Cria um novo participante
+                            participante = Participante.objects.create(
                                 nome=row["nome"],
                                 cpf=row["cpf"],
                                 email=row["email"],
-                                nome_empresa=row["nome_empresa"],
-                                cnpj_empresa=row["cnpj_empresa"],
-                                telefone=row["telefone"],
+                                nome_empresa=row.get("nome_empresa"),
+                                cnpj_empresa=row.get("cnpj_empresa"),
+                                telefone=row.get("telefone"),
                                 pago=row["pago"]
+                            )
+
+                        # Cria participação se houver evento definido
+                        if evento_final:
+                            Participacao.objects.update_or_create(
+                                participante=participante,
+                                evento=evento_final,
+                                defaults={
+                                    'pagamento_confirmado': participante.pago,
+                                    'checkin_realizado': False
+                                }
                             )
 
                 messages.success(request, "Dados importados com sucesso!")
@@ -273,7 +316,12 @@ def import_participantes(request):
     else:
         form = UploadFileForm()
     
-    return render(request, "cred_app/import_participantes.html", {"form": form})
+    # Adiciona lista de eventos para seleção no template
+    eventos = Evento.objects.all()
+    return render(request, "cred_app/import_participantes.html", {
+        "form": form,
+        "eventos": eventos
+    })
 
 
 #-----------------------------Relatórios-----------------------------------
