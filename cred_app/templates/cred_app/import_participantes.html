@@ -1,29 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importar Participantes{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <h2>Importar Participantes</h2>
-    <ul>
-        <li>Campo no excel e csv</li>
-        <li>nome - cpf - email - nome_empresa - cnpj_empresa - telefone - pago</li>
-    </ul>
     
-    <!-- Exibe mensagens -->
-    {% if messages %}
-        <div class="alert alert-info">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
+    <div class="card mt-4">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="evento" class="form-label">Associar a Evento (opcional):</label>
+                    <select name="evento" id="evento" class="form-select">
+                        <option value="">-- Selecione um evento --</option>
+                        {% for evento in eventos %}
+                            <option value="{{ evento.id }}">{{ evento.nome }} ({{ evento.data|date:"d/m/Y" }})</option>
+                        {% endfor %}
+                    </select>
+                    <small class="text-muted">Deixe em branco se não quiser associar a um evento agora</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="file" class="form-label">Arquivo (CSV ou Excel):</label>
+                    <input type="file" class="form-control" id="file" name="file" accept=".csv,.xlsx,.xls" required>
+                    <small class="text-muted">Colunas esperadas: Nome, CPF, Email (obrigatórios) e opcionais: Nome Empresa, CNPJ Empresa, Telefone, Pago, Evento_ID</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Importar</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
         </div>
+    </div>
+    
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
     
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="file" class="form-label">Selecione um arquivo CSV ou Excel</label>
-            <input type="file" name="file" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Importar</button>
-    </form>
+    <div class="mt-4">
+        <h4>Instruções:</h4>
+        <ul>
+            <li>O arquivo deve conter pelo menos as colunas: <strong>Nome, CPF e Email</strong></li>
+            <li>Coluna "Pago" pode conter: true/1/yes/sim ou false/0/no/não</li>
+            <li>Para associar participantes a eventos diferentes, inclua uma coluna "evento_id" com os IDs</li>
+            <li>Participantes existentes serão atualizados</li>
+        </ul>
+        
+        <a href="{% static 'importar/modelo_importacao.csv' %}" class="btn btn-outline-secondary mt-2">
+            <i class="fas fa-download"></i> Baixar Modelo CSV
+        </a>
+    </div>
 </div>
 {% endblock %}
