@@ -7,25 +7,53 @@
 {% block content %}
 
     <style>
+        .evento-card {
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
         .evento-imagem {
-            width: 300px; /* Defina a largura desejada */
-            height: 200px; /* Defina a altura desejada */
-            object-fit: cover; /* Ajusta a imagem para cobrir o espaço definido */
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn-voltar {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .btn-acoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn-acoes a {
+            flex: 1;
         }
     </style>
 
     <div class="container">
-        <h1>{{ evento.nome }}</h1>
-        {% if evento.foto %}
-            <img src="{{ evento.foto.url }}" alt="Imagem do evento" class="img-fluid mb-4 evento-imagem  evento-imagem">
-        {% else %}
-            <img src="{% static 'image/placeholder.png' %}" alt="Imagem do evento" class="img-fluid mb-4 evento-imagem  evento-imagem">
-        {% endif %}
+        <div class="card evento-card">
+            {% if evento.foto %}
+                <img src="{{ evento.foto.url }}" alt="Imagem do evento" class="evento-imagem">
+            {% else %}
+                <img src="{% static 'image/placeholder.png' %}" alt="Imagem do evento" class="evento-imagem">
+            {% endif %}
 
-        
-        <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Descrição:</h5>
+                <h2 class="card-title text-center">{{ evento.nome }}</h2>
+                
+                <h5 class="card-title mt-3">Descrição:</h5>
                 <p class="card-text">{{ evento.descricao }}</p>
 
                 <h5 class="card-title">Data do Evento:</h5>
@@ -33,9 +61,15 @@
 
                 <h5 class="card-title">Localização:</h5>
                 <p class="card-text">{{ evento.local }}</p>
-                
-                <a href="{% url 'home' %}" class="btn btn-primary">Voltar para a página inicial</a>
+
+                <div class="btn-acoes">
+                    <a href="{% url 'lista_participantes_evento' evento.id %}" class="btn btn-info">
+                        Ver Participantes
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+                </div>
             </div>
         </div>
     </div>
+
 {% endblock %}
