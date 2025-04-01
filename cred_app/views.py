@@ -67,7 +67,7 @@ def atualizar_participante(request, id):
 
 
 
-
+# Fluxo Eventos, Detalhes Eventos, Participantes do evento
 @login_required
 def lista_eventos(request):
     eventos = Evento.objects.all()
@@ -78,10 +78,21 @@ def detalhes_evento(request, evento_id):
     evento = get_object_or_404(Evento, id=evento_id)  # Busca o evento pelo ID ou retorna 404 se não encontrar
     return render(request, 'cred_app/detalhes_evento.html', {'evento': evento})
 
+@login_required
+def lista_participantes_evento(request, evento_id):
+    evento = get_object_or_404(Evento, id=evento_id)
+    participantes = Participacao.objects.filter(evento=evento).select_related('participante')
+    
+    context = {
+        'evento': evento,
+        'participantes': participantes,
+    }
+    return render(request, 'cred_app/lista_participantes_evento.html', context)
 
 
 
-# Função para cadastrar o participante
+
+#------------------------Função para cadastrar o participante-----------------------
 def cadastro_participante(request):
     if request.method == 'POST':
         form = ParticipanteForm(request.POST, request.FILES)
@@ -151,13 +162,7 @@ def cancelar_inscricao(request, participacao_id):
     return redirect('detalhes_participante', participante_id=participante_id)  # Redireciona para a página de inscrição
 
 
-
-
-
-
-
-
-#para atualizar os status de checkin e pagamentos e liberar impressao
+#-------------atualizar os status de checkin e pagamentos e liberar impressao----------------
 @login_required
 def atualizar_participacoes(request, participante_id):
     participante = get_object_or_404(Participante, id=participante_id)
@@ -188,12 +193,12 @@ def atualizar_participacoes(request, participante_id):
 @login_required
 def imprimir_etiqueta(request, participacao_id):
     participacao = get_object_or_404(Participacao, id=participacao_id)
-    return render(request, 'cred_app/imprimir_etiqueta.html', {'participacao': participacao})
+    return render(request, 'cred_app/imprimir_etiqueta_c.html', {'participacao': participacao})
 
 
 
 
-# Importação de dados:
+#-----------------------------Importação de dados-----------------------------------
 @login_required
 def import_participantes(request):
     if request.method == "POST":
