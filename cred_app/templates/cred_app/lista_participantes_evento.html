@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Participantes do Evento - {{ evento.nome }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Participantes do Evento: {{ evento.nome }}</h2>
+            <a href="{% url 'detalhes_evento' evento.id %}" class="btn btn-secondary">
+                Voltar para o Evento
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Empresa</th>
+                        <th>Pagamento</th>
+                        <th>Check-in</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for participacao in participantes %}
+                    <tr>
+                        <td>
+                            {% if participacao.participante.foto %}
+                                <img src="{{ participacao.participante.foto.url }}" alt="Foto" width="50" height="50" style="border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ participacao.participante.nome }}</td>
+                        <td>{{ participacao.participante.cpf|slice:":3" }}.{{ participacao.participante.cpf|slice:"3:6" }}.{{ participacao.participante.cpf|slice:"6:9" }}-{{ participacao.participante.cpf|slice:"9:11" }}</td>
+                        <td>{{ participacao.participante.nome_empresa|default:"-" }}</td>
+                        <td>
+                            {% if participacao.pagamento_confirmado %}
+                                <span class="badge bg-success">Confirmado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if participacao.checkin_realizado %}
+                                <span class="badge bg-success">Realizado</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Não feito</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'imprimir_etiqueta' participacao.id %}" class="btn btn-sm btn-primary" title="Imprimir Crachá">
+                                <i class="fas fa-print"><span>Imprimir Cracha</span></i>
+                            </a>
+                            <a href="{% url 'detalhes_participante' participacao.participante.id %}" class="btn btn-sm btn-info" title="Ver Detalhes">
+                                <i class="fas fa-eye">Ver Detalhes</i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhum participante inscrito neste evento ainda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
