@@ -22,6 +22,7 @@ urlpatterns = [
     
     path('eventos/', views.lista_eventos, name='lista_eventos'),
     path('evento/<int:evento_id>/', views.detalhes_evento, name='detalhes_evento'),
+    path('evento/<int:evento_id>/participantes/', views.lista_participantes_evento, name='lista_participantes_evento'),
 
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
