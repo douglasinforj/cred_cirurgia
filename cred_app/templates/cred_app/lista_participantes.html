@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Lista de Participantes</h2>
+    <h2 class="text-center mb-4">Lista de Participantes (Cadastro Geral)</h2>
 
     <form method="GET" action="{% url 'lista_participantes' %}" class="d-flex mb-4">
         <input class="form-control me-2" style="width: 300px;" type="search" name="q" placeholder="Buscar por nome ou CPF" aria-label="Search" value="{{ query|default:'' }}">
